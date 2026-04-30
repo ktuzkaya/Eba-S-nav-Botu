@@ -1,6 +1,5 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
-const isDev = require('electron-is-dev');
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -14,12 +13,12 @@ function createWindow() {
     icon: path.join(__dirname, '../public/favicon.ico')
   });
 
-  // Geliştirme modundaysa localhost:3000, değilse build klasöründeki index.html
-  win.loadURL(
-    isDev
-      ? 'http://localhost:3000'
-      : `file://${path.join(__dirname, '../dist/index.html')}`
-  );
+  // app.isPackaged check avoids needs for 'electron-is-dev'
+  if (app.isPackaged) {
+    win.loadFile(path.join(__dirname, '../dist/index.html'));
+  } else {
+    win.loadURL('http://localhost:3000');
+  }
 
   // Menü çubuğunu gizle (isteğe bağlı)
   // win.setMenuBarVisibility(false);
